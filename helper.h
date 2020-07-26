@@ -11,18 +11,14 @@ extern int animation_helper;
 extern const float m_pi;
 extern const float m_eps;
 
-// typedef struct _helper{
-//     int animation_helper;
-// }helper;
 
-
-
-//todo: add a structre maybeeeee */
-//helper* init_helper();
+void error_msg(const char *s);
 void draw_coord(float len);
 void set_normal_and_vertex(float u, float v);
 void draw_sphere(void);
+
 void draw_plane(float len);
+void draw_helper();
 
 
 #endif

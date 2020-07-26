@@ -1,6 +1,14 @@
 #ifndef PLAYER_H
 #define PLAYER_H
 
+
+#define MSEC_IN_SEC (1000)
+#define MSEC_TO_SEC(x) ((x)/(MSEC_IN_SEC))
+
+extern const float g_y;
+extern const int timer_id;
+extern const int timer_msec_interval;
+
 /* representing player states for jumping and collision functions */
 typedef enum _game_state{
     ROLLING = 1,  /* you are rolling if you are on solid ground */
@@ -17,22 +25,19 @@ typedef struct _player{
     float v_y;    /* speed vector for y axis */ 
     int jump_counter; /* you can only jump twice, but then you need to fall on the ground to replenish your counter */
     game_state player_state; /* current state of our player */
+    float animation_parameter; /* animation_parameter, used for rotation of the ball */
 
 }player;
 
 
 
-player* init_player(float r, 
-                    float x_curr, 
-                    float y_curr, 
-                    float v_x, 
-                    float v_y,
-                    int jump_counter,
-                    game_state player_state);
-//void player_destroy(player* p);
-void draw_ball(float r, float x, float y, float animation_parameter); 
-void jump(void);
- 
+void init_player(player *p);
+void player_destroy(player* p);
+void draw_ball(player *p); 
+void move_left(player *p);
+void move_right(player *p);
+void jump(player *p);
+
 
 
 #endif

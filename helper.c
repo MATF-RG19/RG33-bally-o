@@ -1,20 +1,24 @@
+/* system headers */ 
 #include <GL/glut.h>
-#include "helper.h"
 #include <math.h>
+#include <stdlib.h>
+#include <errno.h>
+#include <stdio.h>
 
+/* user headers */ 
+#include "helper.h"
 
 
 int animation_helper = 0;
 const float m_pi = 3.1415926535f;
 const float m_eps = 0.01f;
 
-// helper* init_helper()
-// {
-// 	helper *h;
-// 	h->animation_helper = 0;
-// 	return h;
-// }
 
+void error_msg(const char *s)
+{
+	perror(s);
+	exit(EXIT_FAILURE);
+}
 void set_normal_and_vertex(float u, float v)
 {
 	glNormal3f(sin(u) * sin(v), cos(u), sin(u) * cos(v));
@@ -53,19 +57,19 @@ void draw_coord(float len)
 {
     glDisable(GL_LIGHTING);
 	glLineWidth(DEFAULT_LINE_WIDTH);
- 	glBegin(GL_LINES);
+	glBegin(GL_LINES);
 		/* x - axis - red */ 
-  	    glColor3f(1,0,0);
-  	    glVertex3f(0,0,0);
-  	    glVertex3f(len,0,0);
+		glColor3f(1,0,0);
+		glVertex3f(0,0,0);
+		glVertex3f(len,0,0);
 		/* y - axis - green */
-  	    glColor3f(0,1,0);
-  	    glVertex3f(0,0,0);
-  	    glVertex3f(0,len,0);
+		glColor3f(0,1,0);
+		glVertex3f(0,0,0);
+		glVertex3f(0,len,0);
 		/* z - axis - blue */
-  	    glColor3f(0,0,1);
-  	    glVertex3f(0,0,0);
-  	    glVertex3f(0,0,len);
+		glColor3f(0,0,1);
+		glVertex3f(0,0,0);
+		glVertex3f(0,0,len);
 	glEnd();
 	/* setting line width back to normal, 
 	 * cause it wont be done automatically 
@@ -73,4 +77,10 @@ void draw_coord(float len)
 	glLineWidth(DEFAULT_LINE_WIDTH);
     glEnable(GL_LIGHTING);
 
+}
+void draw_helper(){
+	if(animation_helper){
+		draw_coord(HELPER_SIZE);
+		draw_plane(HELPER_SIZE);
+	}
 }
