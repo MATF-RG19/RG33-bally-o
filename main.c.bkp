@@ -5,34 +5,38 @@
 #include <GL/glut.h>
 #include <stdlib.h>
 #include <time.h>
+#include <math.h>
 #include "helper.h"
 /* prebaceno u helper.h */
 /* define macros for magic numbers */ 
-#define MSEC_IN_SEC (1000)
-#define MSEC_TO_SEC(x) ((x)/(MSEC_IN_SEC))
-
-#define Z_CAMERA_EYE (1500)
-#define Z_NEAR (1)
-#define Z_FAR  (2000)
-#define CAMERA_ANGLE (60)
+// #define MSEC_IN_SEC (1000)
+// #define MSEC_TO_SEC(x) ((x)/(MSEC_IN_SEC))
+// #define DEFAULT_LINE_WIDTH (1)
+// #define AXIS_LINE_WIDTH (3)
+// #define HELPER_SIZE (5000000)
+// #define Z_CAMERA_EYE (1500)
+// #define Z_NEAR (1)
+// #define Z_FAR  (2000)
+// #define CAMERA_ANGLE (60)
 
 /* animation parameters */
 static const int timer_id  = 1; 
 static const int timer_msec_interval = 20;
 static int animation_active;
 static float animation_parameter;
-
+//static int animation_helper; /* prebaceno u helper.h */
 /* physics and maths */ 
 static const float g_y = 9.81f;
-
+//static const float m_pi = 3.1415926535f;
+//static const float m_eps = 0.01f;
 /* structure for ball */ 
-static float x_curr; //player.h
-static float y_curr; //player.h
-static float v_x; //player.h
-static float v_y; //player.h
-static float r = 50.0f; //player.h
-static int jump_state; //player.h
-static int jump_count; //player.h
+static float x_curr;
+static float y_curr;
+static float v_x;
+static float v_y;
+static float r = 50.0f;
+static int jump_state;
+static int jump_count;
 
 /* callback functions */
 static void on_display(void);
@@ -42,18 +46,22 @@ static void on_timer(int);
 
 /* init parameters and helper functions */
 void init_params(void);
+//void draw_coord(float len); //helper.h
 /* draw objects */
+//void set_normal_and_vertex(float u, float v);//helper.h
 void draw_platform(float x, float y); //map.h
 void draw_ball(float r, float x, float y, float animation_parameter); //player.h
+//void draw_sphere(void); //helper.h
+void draw_plane(float len); //helper.h
 
 
 
 
-
-
-void restart_animation(int animation_active, float animation_parameter, int animation_helper); //settings.h
-void restart_game(float x, float y, float v_x, float v_y, int jump_state, int jump_count); //settings.h
-void stop(float v_x, float v_y, int jump_state, float animation_parameter, int animation_active); //settings.h
+//void jump() // player.h
+//void restart(void); //will need to go to player.h
+void restart_animation(int animation_active, float animation_parameter, int animation_helper); //player.h
+void restart_game(float x, float y, float v_x, float v_y, int jump_state, int jump_count); //player.h
+void stop(float v_x, float v_y, int jump_state, float animation_parameter, int animation_active); //player.h
 
 
 /* collision stuff */
@@ -62,8 +70,8 @@ int player_floor_collision(float x, float y, float r);
 void player_floor_collision_event(float x, float y, float r);
 int player_brick_collision(float x, float y, float r, float d);
 void player_brick_collision_event(float x, float y, float r, float d);
-
-//void print_game_status_info(float x_curr, float y_curr, float animation_parameter, int animation_active);
+/* information output */
+void print_game_status_info(float x_curr, float y_curr, float animation_parameter, int animation_active);
 int main(int argc, char **argv){
 	glutInit(&argc, argv);
 	glutInitDisplayMode(GLUT_RGB | GLUT_DEPTH | GLUT_DOUBLE);
@@ -118,6 +126,27 @@ void init_params(){
 	glLightModeli(GL_LIGHT_MODEL_TWO_SIDE, 1);
 }
 
+
+// void set_normal_and_vertex(float u, float v)
+// {
+// 	glNormal3f(sin(u) * sin(v), cos(u), sin(u) * cos(v));
+// 	glVertex3f(sin(u) * sin(v), cos(u), sin(u) * cos(v));
+// }
+
+// void draw_sphere()
+// {
+// 	glPushMatrix();
+// 		for(float u = 0.0f; u < m_pi; u += m_pi / 20.0f){
+// 			glBegin(GL_TRIANGLE_STRIP);
+// 				for(float v = 0.0f; v <= m_pi*2 + m_eps; v += m_pi/ 20.0f){
+// 					set_normal_and_vertex(u, v);
+// 					set_normal_and_vertex(u + m_pi / 20.0f, v);
+// 				}
+// 			glEnd();
+// 		}
+// 	glPopMatrix();
+// }
+
 void draw_ball(float r, float x, float y, float animation_parameter)
 {
 	glPushMatrix();
@@ -129,21 +158,21 @@ void draw_ball(float r, float x, float y, float animation_parameter)
 	glPopMatrix();
 }
 
-// void print_game_status_info(float x_curr, float y_curr, float animation_parameter, int animation_active)
-// {
-// 	fprintf(stdout, "*************************************************************************\n");
-// 	fprintf(stdout, "Information:\nBall (Player) at place (x: %f, y: %f, z: 1500).\n", x_curr, y_curr);
-// 	fprintf(stdout, "Distance from ground: (%f).\nAnimation status: %d\nAnimation parameter: (%f) \n", (y_curr), animation_active, animation_parameter);
-// 	/* create a specific check collision detection function for this */ 
-// 	if(player_floor_collision(x_curr, y_curr, r)){
-// 		fprintf(stdout, "*************************************************************************\n");
-// 		fprintf(stdout, "Collision detected with floor: you lost!\n");
-// 		fprintf(stdout, "*************************************************************************\n");
+void print_game_status_info(float x_curr, float y_curr, float animation_parameter, int animation_active)
+{
+	fprintf(stdout, "*************************************************************************\n");
+	fprintf(stdout, "Information:\nBall (Player) at place (x: %f, y: %f, z: 1500).\n", x_curr, y_curr);
+	fprintf(stdout, "Distance from ground: (%f).\nAnimation status: %d\nAnimation parameter: (%f) \n", (y_curr), animation_active, animation_parameter);
+	/* create a specific check collision detection function for this */ 
+	if(player_floor_collision(x_curr, y_curr, r)){
+		fprintf(stdout, "*************************************************************************\n");
+		fprintf(stdout, "Collision detected with floor: you lost!\n");
+		fprintf(stdout, "*************************************************************************\n");
 
-// 	}
-// 	fprintf(stdout, "*************************************************************************\n");
+	}
+	fprintf(stdout, "*************************************************************************\n");
 
-// }
+}
 
 static void on_keyboard(unsigned char key, int x, int y)
 {
@@ -256,11 +285,51 @@ static void on_display()
 
 
 	/* y coord will always be the distance between our ball and the ground */
-	//print_game_status_info(x_curr, y_curr, animation_parameter, animation_active);
+	print_game_status_info(x_curr, y_curr, animation_parameter, animation_active);
 	draw_ball(r, x_curr, y_curr, animation_parameter);
 	draw_platform(55.0,65.0);
 	glutSwapBuffers();
 }
+
+// void draw_plane(float len)
+// {
+// 	glDisable(GL_LIGHTING);
+// 	glColor3f(0.75,0.75,0.75);
+// 	glBegin(GL_POLYGON);
+// 		glVertex3f(len, 0, 0);
+// 		glVertex3f(-len, 0, 0);
+// 		glVertex3f(0, 0, -len);
+// 		glVertex3f(0, 0, len);
+// 	glEnd();
+// 	glEnable(GL_LIGHTING);
+// }
+
+// void draw_coord(float len)
+// {
+// 	glLineWidth(AXIS_LINE_WIDTH);
+// 	glDisable(GL_LIGHTING);
+//  	glBegin(GL_LINES);
+// 		/* x - axis - red */ 
+//   		glColor3f(1,0,0);
+//   		glVertex3f(0,0,0);
+//   		glVertex3f(len,0,0);
+// 		/* y - axis - green */
+//   		glColor3f(0,1,0);
+//   		glVertex3f(0,0,0);
+//   		glVertex3f(0,len,0);
+// 		/* z - axis - blue */
+//   		glColor3f(0,0,1);
+//   		glVertex3f(0,0,0);
+//   		glVertex3f(0,0,len);
+// 	glEnd();
+// 	glEnable(GL_LIGHTING);
+
+// 	/* setting line width back to normal, 
+// 	 * cause it wont be done automatically 
+// 	 * after ending this scope */ 
+// 	glLineWidth(DEFAULT_LINE_WIDTH);
+// }
+
 
 void restart_animation(int animation_active, float animation_parameter, int animation_helper)
 {
