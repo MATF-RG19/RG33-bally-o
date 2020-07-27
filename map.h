@@ -13,6 +13,7 @@ typedef struct map{
 
 typedef struct tile{
     float x, y;
+    float edge_length;
     float scaling_factor;
 }tile;
 
@@ -22,6 +23,5 @@ void init_map(map *m);
 void draw_tile(tile *t);
 void draw_map(map *m);
 void destroy_map(map *m);
-void map_status_info(map *m);
 
 #endif

@@ -4,6 +4,7 @@
 #include <GL/glu.h>
 #include <GL/glut.h>
 #include <stdlib.h>
+#include <time.h>
 #include "helper.h"
 #include "player.h"
 #include "settings.h"
@@ -11,7 +12,7 @@
 static player p;
 static animation_settings as; 
 static const char *name = "bally-o";
-
+static float camera_animation = 0;
 
 /* callback functions */
 static void on_display(void);
@@ -23,8 +24,8 @@ static void on_timer(int);
 void init_params(void);
 void init_light(void);
 /* draw objects */
-void draw_platform(float x, float y); /* ici ce u map.h */
 void draw_map();
+void draw_platform(float x, float y, float edge_length, float scaling_factor);
 
 int main(int argc, char **argv){
 	glutInit(&argc, argv);
@@ -37,6 +38,9 @@ int main(int argc, char **argv){
 	glutReshapeFunc(on_reshape);
 	glutDisplayFunc(on_display);
 	glutKeyboardFunc(on_keyboard);
+
+	/* use current time as seed for random number generator */
+	srand(time(NULL));
 
 	init_params();
 
@@ -79,7 +83,6 @@ void init_light(void)
 
 	glShadeModel(GL_SMOOTH);
 }
-
 
 static void on_keyboard(unsigned char key, int x, int y)
 {
@@ -136,6 +139,7 @@ static void on_timer(int id)
 		return;
 
 	move_right(&p);
+	camera_animation += 1;
 
 	glutPostRedisplay();
 	
@@ -160,7 +164,7 @@ static void on_display()
 	/* setting up camera */
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
-	gluLookAt(/*p.x_curr*/ 1000, 0, 1500, /*p.x_curr*/ 0, 0, 0, 0, 1, 0);
+	gluLookAt(p.x_curr, 1, 1500, p.x_curr, 0, 0, 0, 1, 0);
 	/* this will go to a function draw_ball */ 
 	
 	draw_helper();
@@ -171,59 +175,42 @@ static void on_display()
 	/* y coord will always be the distance between our ball and the ground */
 	//print_game_status_info(x_curr, y_curr, animation_parameter, animation_active);
 	draw_ball(&p);
-	draw_platform(100,200);
+	draw_map();
+
 	glutSwapBuffers();
 }
 
-
-
-void draw_platform(float x, float y)
-{
-
-	glDisable(GL_LIGHTING);
+void draw_platform(float x, float y, float edge_length, float scaling_factor)
+{	
 	glPushMatrix();
-		glTranslatef(x,y,0);
-		glColor3f(1.0f,1.0f,0.0f);
-		glScalef(100,100,100);
-		glBegin(GL_QUADS);                // Begin drawing the color cube with 6 quads
-      	// Top face (y = 1.0f)
-      	// Define vertices in counter-clockwise (CCW) order with normal pointing out
-      		glVertex3f( 1.0f, 1.0f, -1.0f);
-      		glVertex3f(-1.0f, 1.0f, -1.0f);
-			glVertex3f(-1.0f, 1.0f,  1.0f);
-     		glVertex3f( 1.0f, 1.0f,  1.0f);
- 
-    	// Bottom face (y = -1.0f)
-     		glVertex3f( 1.0f, -1.0f,  1.0f);
-      		glVertex3f(-1.0f, -1.0f,  1.0f);
-      		glVertex3f(-1.0f, -1.0f, -1.0f);
-      		glVertex3f( 1.0f, -1.0f, -1.0f);
- 
-      		// Front face  (z = 1.0f)
-     		glVertex3f( 1.0f,  1.0f, 1.0f);
-      		glVertex3f(-1.0f,  1.0f, 1.0f);
-      		glVertex3f(-1.0f, -1.0f, 1.0f);
-      		glVertex3f( 1.0f, -1.0f, 1.0f);
- 
-     	    // Back face (z = -1.0f)
-      		glVertex3f( 1.0f, -1.0f, -1.0f);
-      		glVertex3f(-1.0f, -1.0f, -1.0f);
-      		glVertex3f(-1.0f,  1.0f, -1.0f);
-      		glVertex3f( 1.0f,  1.0f, -1.0f);
- 
-      		// Left face (x = -1.0f)
-      		glVertex3f(-1.0f,  1.0f,  1.0f);
-      		glVertex3f(-1.0f,  1.0f, -1.0f);
-      		glVertex3f(-1.0f, -1.0f, -1.0f);
-      		glVertex3f(-1.0f, -1.0f,  1.0f);
- 
-      		// Right face (x = 1.0f)
-      		glVertex3f(1.0f,  1.0f, -1.0f);
-     		glVertex3f(1.0f,  1.0f,  1.0f);
-      		glVertex3f(1.0f, -1.0f,  1.0f);
-      		glVertex3f(1.0f, -1.0f, -1.0f);
-   		glEnd();  // End of drawing color-cube
+		GLfloat ambient1[] = {1.0,1,0.6,0};
+    	GLfloat diffuse1[] = {1.0f,0.7,0.7,0};
+    	GLfloat specular1[] = {1,0.6,0.6,1};
+    	GLfloat shininess1 = 10;
+
+    	glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, ambient1);
+    	glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, diffuse1);
+    	glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, specular1);
+    	glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS, shininess1);
+		glScalef(scaling_factor, 1, 1);
+		draw_cube(x,y,0, edge_length);
+
 	glPopMatrix();
-	glEnable(GL_LIGHTING);
+}
+
+void draw_map(){
+	
+
+
+	/* generate random x and y coords*/
+	float rand_x[10], rand_y[10];
+	for(int i=0; i < 5; i++){
+		rand_x[i] = (rand() % (2000 - (0) + 1)) + (0);
+		rand_y[i] = (rand() % (600 - (-400) + 1)) + (-400);
+	}
+
+	for(int i = 0; i < 5; i++){
+		draw_platform(rand_x[i], rand_y[i], 80, 10);
+	}
 }
 

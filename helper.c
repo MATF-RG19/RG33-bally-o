@@ -84,3 +84,60 @@ void draw_helper(){
 		draw_plane(HELPER_SIZE);
 	}
 }
+
+/* used code from https://www.youtube.com/watch?v=vcMox6i8f4Y 
+*/
+void draw_cube( GLfloat center_pos_x, GLfloat center_pos_y, GLfloat center_pos_z, GLfloat edge_length )
+{
+    GLfloat half_side_length = edge_length * 0.5f;
+    
+    GLfloat vertices[] =
+    {
+        // front face
+        center_pos_x - half_side_length, center_pos_y + half_side_length, center_pos_z + half_side_length, // top left
+        center_pos_x + half_side_length, center_pos_y + half_side_length, center_pos_z + half_side_length, // top right
+        center_pos_x + half_side_length, center_pos_y - half_side_length, center_pos_z + half_side_length, // bottom right
+        center_pos_x - half_side_length, center_pos_y - half_side_length, center_pos_z + half_side_length, // bottom left
+        
+        // back face
+        center_pos_x - half_side_length, center_pos_y + half_side_length, center_pos_z - half_side_length, // top left
+        center_pos_x + half_side_length, center_pos_y + half_side_length, center_pos_z - half_side_length, // top right
+        center_pos_x + half_side_length, center_pos_y - half_side_length, center_pos_z - half_side_length, // bottom right
+        center_pos_x - half_side_length, center_pos_y - half_side_length, center_pos_z - half_side_length, // bottom left
+        
+        // left face
+        center_pos_x - half_side_length, center_pos_y + half_side_length, center_pos_z + half_side_length, // top left
+        center_pos_x - half_side_length, center_pos_y + half_side_length, center_pos_z - half_side_length, // top right
+        center_pos_x - half_side_length, center_pos_y - half_side_length, center_pos_z - half_side_length, // bottom right
+        center_pos_x - half_side_length, center_pos_y - half_side_length, center_pos_z + half_side_length, // bottom left
+        
+        // right face
+        center_pos_x + half_side_length, center_pos_y + half_side_length, center_pos_z + half_side_length, // top left
+        center_pos_x + half_side_length, center_pos_y + half_side_length, center_pos_z - half_side_length, // top right
+        center_pos_x + half_side_length, center_pos_y - half_side_length, center_pos_z - half_side_length, // bottom right
+        center_pos_x + half_side_length, center_pos_y - half_side_length, center_pos_z + half_side_length, // bottom left
+        
+        // top face
+        center_pos_x - half_side_length, center_pos_y + half_side_length, center_pos_z + half_side_length, // top left
+        center_pos_x - half_side_length, center_pos_y + half_side_length, center_pos_z - half_side_length, // top right
+        center_pos_x + half_side_length, center_pos_y + half_side_length, center_pos_z - half_side_length, // bottom right
+        center_pos_x + half_side_length, center_pos_y + half_side_length, center_pos_z + half_side_length, // bottom left
+        
+        // top face
+        center_pos_x - half_side_length, center_pos_y - half_side_length, center_pos_z + half_side_length, // top left
+        center_pos_x - half_side_length, center_pos_y - half_side_length, center_pos_z - half_side_length, // top right
+        center_pos_x + half_side_length, center_pos_y - half_side_length, center_pos_z - half_side_length, // bottom right
+        center_pos_x + half_side_length, center_pos_y - half_side_length, center_pos_z + half_side_length  // bottom left
+    };
+    
+    glPolygonMode( GL_FRONT_AND_BACK, GL_POLYGON );
+    //glColor3f( colour[0], colour[1], colour[2] );
+    glEnableClientState( GL_VERTEX_ARRAY );
+    glVertexPointer( 3, GL_FLOAT, 0, vertices );
+	glShadeModel(GL_SMOOTH);
+
+    glDrawArrays(GL_QUADS, 0, 24 );
+    
+    glDisableClientState( GL_VERTEX_ARRAY );
+}
+
