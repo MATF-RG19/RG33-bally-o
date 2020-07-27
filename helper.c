@@ -19,20 +19,21 @@ void error_msg(const char *s)
 	perror(s);
 	exit(EXIT_FAILURE);
 }
-void set_normal_and_vertex(float u, float v)
+void set_normal_and_vertex(float u, float v, float r)
 {
-	glNormal3f(sin(u) * sin(v), cos(u), sin(u) * cos(v));
-	glVertex3f(sin(u) * sin(v), cos(u), sin(u) * cos(v));
+	glNormal3f(sin(u) * sin(v) * r, cos(u) * r, sin(u) * cos(v) * r);
+	glVertex3f(sin(u) * sin(v) * r, cos(u) * r, sin(u) * cos(v) * r);
 }
 
-void draw_sphere()
+/* possibly will be switched with something else */
+void draw_sphere(float r)
 {
 	glPushMatrix();
 		for(float u = 0.0f; u < m_pi; u += m_pi / 20.0f){
 			glBegin(GL_TRIANGLE_STRIP);
 				for(float v = 0.0f; v <= m_pi*2 + m_eps; v += m_pi/ 20.0f){
-					set_normal_and_vertex(u, v);
-					set_normal_and_vertex(u + m_pi / 20.0f, v);
+					set_normal_and_vertex(u, v, r);
+					set_normal_and_vertex(u + m_pi / 20.0f, v, r);
 				}
 			glEnd();
 		}
@@ -83,6 +84,9 @@ void draw_helper(){
 		draw_coord(HELPER_SIZE);
 		draw_plane(HELPER_SIZE);
 	}
+	/* dump helper on the scene */
+	glutPostRedisplay();
+
 }
 
 /* used code from https://www.youtube.com/watch?v=vcMox6i8f4Y 
@@ -141,3 +145,18 @@ void draw_cube( GLfloat center_pos_x, GLfloat center_pos_y, GLfloat center_pos_z
     glDisableClientState( GL_VERTEX_ARRAY );
 }
 
+
+void draw_pane()
+{
+	glPushMatrix();
+		glScalef(10, 1, 1);
+		glColor3f(0,0.75,0);
+		glBegin(GL_POLYGON);
+			glVertex3f(1,0,-2);
+			glVertex3f(0,1,-2);
+			glVertex3f(-1,0,-2);
+			glVertex3f(0,-1,-2);
+		glEnd();
+	glPopMatrix();
+
+}

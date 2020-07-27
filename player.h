@@ -11,7 +11,8 @@ extern const int timer_msec_interval;
 
 /* representing player states for jumping and collision functions */
 typedef enum _game_state{
-    ROLLING = 1,  /* you are rolling if you are on solid ground */
+    ROLLING_RIGHT = 0,
+    ROLLING_LEFT = 1,  /* you are rolling if you are on solid ground */
     JUMPING = 2,  /* you are in jumping mode if you jump/double jump */
     FALLING = 3,  /* you are falling after the jump ends, if you didnt double jump, you can jump now */
     DEATH   = 4   /* you colided with the floor */

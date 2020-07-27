@@ -1,8 +1,11 @@
 #ifndef COLLISION_H
 #define COLLISION_H
 
+#include "settings.h"
 #include "player.h"
 #include "map.h"
+
+#define COLLISION_FLOOR (600.0f)
 
 
 int player_floor_collision(player *p);

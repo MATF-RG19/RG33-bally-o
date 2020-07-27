@@ -15,12 +15,12 @@ extern const float m_eps;
 
 void error_msg(const char *s);
 void draw_coord(float len);
-void set_normal_and_vertex(float u, float v);
-void draw_sphere(void);
+void set_normal_and_vertex(float u, float v, float r);
+void draw_sphere(float r);
 void draw_cube(GLfloat center_pos_x, GLfloat center_pos_y, GLfloat center_pos_z, GLfloat edge_length);
 void draw_plane(float len);
 void draw_helper();
-
+void draw_pane();
 
 
 #endif
