@@ -84,8 +84,6 @@ void draw_helper(){
 		draw_coord(HELPER_SIZE);
 		draw_plane(HELPER_SIZE);
 	}
-	/* dump helper on the scene */
-	glutPostRedisplay();
 
 }
 
@@ -152,11 +150,16 @@ void draw_pane()
 		glScalef(10, 1, 1);
 		glColor3f(0,0.75,0);
 		glBegin(GL_POLYGON);
-			glVertex3f(1,0,-2);
-			glVertex3f(0,1,-2);
-			glVertex3f(-1,0,-2);
-			glVertex3f(0,-1,-2);
+			glVertex3f(1,0,-1);
+			glVertex3f(0,1,-1);
+			glVertex3f(-1,0,-1);
+			glVertex3f(0,-1,-1);
 		glEnd();
 	glPopMatrix();
 
+}
+
+void toggle_helper()
+{
+	animation_helper = !animation_helper ? 1:0; 
 }

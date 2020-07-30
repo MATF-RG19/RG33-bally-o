@@ -53,18 +53,33 @@ void quit_game()
     exit(EXIT_SUCCESS);
 }
 
-// void print_game_status_info(player *p, animation_settings *as)
-// {
-//     fprintf(stdout, "*************************************************************************\n");
-// 	fprintf(stdout, "Information:\nBall (Player) at place (x: %f, y: %f, z: 1500).\n", p->x_curr, p->y_curr);
-// 	fprintf(stdout, "Distance from ground: (%f).\nAnimation status: %d\nAnimation parameter: (%f)\nGame status: %d\n", p->y_curr, as->animation_active, p->animation_parameter, as->gm);
-// 	/* create a specific check collision detection function for this */ 
-// 	/*if(player_floor_collision(x_curr, y_curr, r)){
-// 		fprintf(stdout, "*************************************************************************\n");
-// 		fprintf(stdout, "Collision detected with floor: you lost!\n");
-// 		fprintf(stdout, "*************************************************************************\n");
+void print_game_status_info(player *p, animation_settings *as)
+{
 
-// 	}
-// 	fprintf(stdout, "*************************************************************************\n");*/
+	fprintf(stdout, "*******************************************\n");
+	fprintf(stdout, "Status: \n");
+	fprintf(stdout, "Player position: (%f, %f,0)\nPlayer velocity: (%f, %f,0)\n", p->x_curr, p->y_curr, p->v_x, p->v_y);
+	fprintf(stdout, "Player state: %s\nPlayer: jump_counter: %d \nPlayer animation_parameter: %f\n", get_player_state(p), p->jump_counter, p->animation_parameter);
+	fprintf(stdout, "Animation active: %s - Animation game mode: %s\n", ((as->animation_active) ? "yes" : "no"), get_game_mode(as));
+	fprintf(stdout, "*******************************************\n");
+}
 
-// }
+const char* get_game_mode(animation_settings *as)
+{
+    switch(as->gm){
+        case INIT:
+            return "INIT";
+        case RESUMED:
+            return "RESUMED";
+        case PAUSED:
+            return "PAUSED";
+        case STOP:
+            return "STOP";
+        case QUIT:
+            return "QUIT";
+        default:
+            return "";
+    }
+}
+
+

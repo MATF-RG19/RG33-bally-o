@@ -4,19 +4,22 @@
 #include "player.h"
 #include "settings.h"
 #include "map.h"
+#include "collision.h"
+#include <stdio.h>
 
 static player p;
 static animation_settings as; 
 static map m;
 static const char *name = "bally-o";
 
+// static float camera_parameter = 0; /* deprecated code */
 /* callback functions */
 static void on_display(void);
 static void on_reshape(int, int);
 static void on_keyboard(unsigned char, int, int);
+static void on_keyboard_up(unsigned char, int, int);
 static void on_timer(int);
 
-/* init parameters  */
 void init_params(void);
 void init_light(void);
 
@@ -31,6 +34,7 @@ int main(int argc, char **argv){
 	glutReshapeFunc(on_reshape);
 	glutDisplayFunc(on_display);
 	glutKeyboardFunc(on_keyboard);
+	glutKeyboardUpFunc(on_keyboard_up);
 	/* use current time as seed for random number generator */
 	init_params();
 
@@ -51,6 +55,10 @@ void init_params()
 	glEnable(GL_LIGHT0);
 
 	init_light();
+	
+	tile tmp = get_closest_to_center(&m);
+	p.x_curr = tmp.x;
+	p.y_curr = tmp.y;
 
 	glClearColor(0,0,0,0);
 	glClearDepth(1.0f);
@@ -72,7 +80,24 @@ void init_light(void)
 	glLightfv(GL_LIGHT0, GL_DIFFUSE, light_diffuse);
 	glShadeModel(GL_SMOOTH);
 }
+static void on_keyboard_up(unsigned char key, int x, int y)
+{
+switch(key){
+		case 'd':
+		case 'D':
+			p.player_state = STILL;
+			glutPostRedisplay();
+			break;
+		case 'a':
+		case 'A':
+			p.player_state = STILL;
+			glutPostRedisplay();
+			break;
+	}
 
+
+}
+/* callback function that registers keyboard events */
 static void on_keyboard(unsigned char key, int x, int y)
 {
 	switch(key){
@@ -100,23 +125,20 @@ static void on_keyboard(unsigned char key, int x, int y)
 		case 'w':
 		case 'W':
 			p.player_state = JUMPING;
-			glutPostRedisplay();
 			break;
 		/* probably will be deleted */
 		case 'd':
 		case 'D':
-			move_right(&p);
-			glutPostRedisplay();
+			p.player_state = ROLLING_RIGHT;
 			break;
 		case 'a':
 		case 'A':
-			move_left(&p);
-			glutPostRedisplay();
+			p.player_state = ROLLING_LEFT;
 			break;
 		case 'h':
 		case 'H':
 			/* toggle xz pane and catestrian system */
-			animation_helper = !animation_helper ? 1:0; 
+			toggle_helper();
 			glutPostRedisplay();
 			break;
 	}
@@ -127,8 +149,13 @@ static void on_timer(int id)
 	if(timer_id != id)
 		return;
 
+
+	move_left(&p);
 	move_right(&p);
 	jump(&p);
+	//death(&p);
+
+	//collision_checks(&p, &m);
 
 	glutPostRedisplay();
 	
@@ -146,21 +173,28 @@ static void on_reshape(int width, int height)
 
 static void on_display()
 {
-	
-
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	/* setting up camera */
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
-	gluLookAt(p.x_curr, 0, 1500, p.x_curr, 0, 0, 0, 1, 0);
-	/* this will go to a function draw_ball */ 
-	
+	gluLookAt(p.x_curr, 0, Z_CAMERA_EYE, p.x_curr, 0, 0, 0, 1, 0);
+	glDisable(GL_LIGHTING);
+	glPushMatrix();
+		glScalef(10,1,1);
+		glColor3f(1,0,0);
+		glutSolidCube(1);
+	glPopMatrix();
+	glEnable(GL_LIGHTING);
+
 	draw_helper();
-	/* y coord will always be the distance between our ball and the ground */
-	//print_game_status_info(x_curr, y_curr, animation_parameter, animation_active);
+
 	draw_ball(&p);
 	draw_map(&m);
+	
+	print_game_status_info(&p, &as);
 
 	glutSwapBuffers();
 }
+
+
 

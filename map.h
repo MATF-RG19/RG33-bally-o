@@ -3,7 +3,7 @@
 
 #define MAX_SIZE (10000)
 #define SIZE (500)
-#define LIMIT_Y (500)
+#define LIMIT_Y (600)
 #define SCALING_FACTOR_START (10)
 #define EDGE_LENGTH_START (50)
 /* random range generated macro */
@@ -25,7 +25,8 @@ typedef struct map{
 }map;
 
 
-
+int cmp_func(const void *a, const void *b);
+tile get_closest_to_center(map *m);
 
 
 void init_tile(tile *t);
@@ -33,6 +34,8 @@ void init_map(map *m);
 void add_tile_to_map(map **m, tile t);
 void draw_tile(tile *t);
 void draw_map(map *m);
+float eucledean_dist(float x1, float y1);
 void destroy_map(map *m);
+void print_map_coords(map *m);
 
 #endif

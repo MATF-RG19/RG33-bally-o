@@ -8,10 +8,10 @@
 /* define macros for magic numbers */ 
 #define Z_CAMERA_EYE (1500)
 #define Z_NEAR (1)
-#define Z_FAR  (2000)
+#define Z_FAR  (1500)
 #define CAMERA_ANGLE (60)
-#define START_WINDOW_WIDTH_SIZE (600)
-#define START_WINDOW_HEIGHT_SIZE (600)
+#define START_WINDOW_WIDTH_SIZE (800)
+#define START_WINDOW_HEIGHT_SIZE (800)
 #define START_WINDOW_POS_X (100)
 #define START_WINDOW_POS_Y (100)
 
@@ -41,6 +41,6 @@ void pause_game(animation_settings *as);
 void stop_game(player *p, animation_settings *as);
 void quit_game(void);
 void print_game_status_info(player *p, animation_settings *as);
-
+const char* get_game_mode(animation_settings *as);
 
 #endif

@@ -21,6 +21,7 @@ void draw_cube(GLfloat center_pos_x, GLfloat center_pos_y, GLfloat center_pos_z,
 void draw_plane(float len);
 void draw_helper();
 void draw_pane();
+void toggle_helper();
 
 
 #endif
