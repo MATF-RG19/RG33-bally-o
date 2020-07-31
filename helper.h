@@ -11,7 +11,7 @@
 extern int animation_helper;
 extern const float m_pi;
 extern const float m_eps;
-
+extern int keys[256];
 
 void error_msg(const char *s);
 void draw_coord(float len);
@@ -22,6 +22,7 @@ void draw_plane(float len);
 void draw_helper();
 void draw_pane();
 void toggle_helper();
+void print_keys();
 
 
 #endif

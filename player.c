@@ -6,8 +6,7 @@
 #include <stdio.h>
 #include <math.h>
 #include "collision.h"
-#include "map.h" /* need this to determine position for our ball */
-
+#include "map.h" 
 
 const float g_y = 9.81f;
 const int timer_id = 1;
@@ -15,21 +14,15 @@ const int timer_msec_interval = 20;
 
 void init_player(player *p)
 {
-
+	p->x_curr = 0;
+	p->y_curr = 0;
 	p->r = 20.0f;
-	p->x_curr = 0.0f;
-	p->y_curr = 0.0f;
 	p->v_x = 10.0f;
 	p->v_y = 5.0f;
-	p->dv_x = 0.5f;
-	p->dv_y = 0.5f;
-	p->ball_mass=10.0f;
-	p->jump_counter=2;
-	p->player_state=ROLLING_RIGHT;
+	p->jump_height = 120.0f;
+	p->player_state=STILL;
 	p->animation_parameter=0;
-
 }
-
 
 void draw_ball(player *p)
 {
@@ -43,7 +36,6 @@ void draw_ball(player *p)
 		glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, diffuse);
 		glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, specular);
 		glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS, shininess);
-
 
 		glTranslatef(p->x_curr, p->y_curr, 0);
 		glRotatef(p->animation_parameter, 0, 0, -1);
@@ -69,12 +61,12 @@ const char* get_player_state(player *p){
 		default:
 			return "";
 	}
-
 }
 
 void still(player *p){
 	if(p->player_state == STILL){
-		p->v_x = 0;
+		p->v_x = (!collision_tile_flag) ? 0 : p->v_x;
+		p->v_y = (collision_tile_flag) ? 0 : p->v_y;
 	}
 }
 
@@ -82,44 +74,38 @@ void move_left(player *p)
 {
 	if(p->player_state == ROLLING_LEFT){
 		p->animation_parameter-=10; /* rolling in reverse */
-		p->v_x += g_y * MSEC_TO_SEC(timer_msec_interval) / 2;
+		p->v_x += g_y * MSEC_TO_SEC(timer_msec_interval) / 2.0f;
 		p->x_curr -= p->v_x;
-		p->v_y += g_y * MSEC_TO_SEC(timer_msec_interval)/ 2;
-		p->y_curr -= p->v_y;
+
 	}
 }
 void move_right(player *p)
 {
 	if(p->player_state == ROLLING_RIGHT){
-		p->jump_counter = 2; /* change this when it colides with a tile */
 		p->animation_parameter+=10;
-		p->v_x += g_y * MSEC_TO_SEC(timer_msec_interval) / 2;
+		p->v_x += g_y * MSEC_TO_SEC(timer_msec_interval) / 2.0f;
 		p->x_curr += p->v_x;
-		p->v_y += g_y * MSEC_TO_SEC(timer_msec_interval)/ 2;
-		p->y_curr -= p->v_y;
+
 	}
 }
 void jump(player *p){
 	
 	if(p->player_state == JUMPING){
-		p->jump_counter--; /* decrement the jump counter */
 		p->animation_parameter += 5; /* slow down rotation parameter of the ball, so that we can simulate air friction */
-		p->v_y += g_y * MSEC_TO_SEC(timer_msec_interval) / 2;
-		p->y_curr +=  10.0f;
-		if(p->y_curr > 60.0f){
+		p->v_y += g_y * MSEC_TO_SEC(timer_msec_interval) / 2.0f;
+		p->y_curr +=  p->v_y;
+		if(p->y_curr  > p->jump_height){
 			p->player_state = FALLING;
 		}
 	}
 	else if(p->player_state == FALLING){
-			p->animation_parameter += 30;
-			p->v_y += g_y * MSEC_TO_SEC(timer_msec_interval) / 2;
-			p->y_curr -=  10.0f;
-		}
-	
+		p->animation_parameter += 30;
+		p->v_y += g_y * MSEC_TO_SEC(timer_msec_interval) / 2.0f;
+		p->y_curr -=   p->v_y;
+	}
 }
-
 
 void death(player *p)
 {
-	player_floor_collision_event(p);
+    player_floor_collision_event(p);
 }

@@ -12,7 +12,7 @@
 int animation_helper = 0;
 const float m_pi = 3.1415926535f;
 const float m_eps = 0.01f;
-
+int keys[256];
 
 void error_msg(const char *s)
 {
@@ -45,10 +45,10 @@ void draw_plane(float len)
     glDisable(GL_LIGHTING);
 	glColor3f(0.75,0.75,0.75);
 	glBegin(GL_POLYGON);
-		glVertex3f(len, 0, 0);
-		glVertex3f(-len, 0, 0);
-		glVertex3f(0, 0, -len);
-		glVertex3f(0, 0, len);
+			glVertex3f(len, 0, 0);
+			glVertex3f(-len, 0, 0);
+			glVertex3f(0, 0, -len);
+			glVertex3f(0, 0, len);
 	glEnd();
     glEnable(GL_LIGHTING);
 
@@ -84,47 +84,39 @@ void draw_helper(){
 		draw_coord(HELPER_SIZE);
 		draw_plane(HELPER_SIZE);
 	}
-
 }
 
-/* used code from https://www.youtube.com/watch?v=vcMox6i8f4Y 
-*/
+/* used code from https://www.youtube.com/watch?v=vcMox6i8f4Y */
 void draw_cube( GLfloat center_pos_x, GLfloat center_pos_y, GLfloat center_pos_z, GLfloat edge_length )
 {
     GLfloat half_side_length = edge_length * 0.5f;
     
     GLfloat vertices[] =
-    {
-        // front face
+    {	// front face
         center_pos_x - half_side_length, center_pos_y + half_side_length, center_pos_z + half_side_length, // top left
         center_pos_x + half_side_length, center_pos_y + half_side_length, center_pos_z + half_side_length, // top right
         center_pos_x + half_side_length, center_pos_y - half_side_length, center_pos_z + half_side_length, // bottom right
         center_pos_x - half_side_length, center_pos_y - half_side_length, center_pos_z + half_side_length, // bottom left
-        
         // back face
         center_pos_x - half_side_length, center_pos_y + half_side_length, center_pos_z - half_side_length, // top left
         center_pos_x + half_side_length, center_pos_y + half_side_length, center_pos_z - half_side_length, // top right
         center_pos_x + half_side_length, center_pos_y - half_side_length, center_pos_z - half_side_length, // bottom right
         center_pos_x - half_side_length, center_pos_y - half_side_length, center_pos_z - half_side_length, // bottom left
-        
         // left face
         center_pos_x - half_side_length, center_pos_y + half_side_length, center_pos_z + half_side_length, // top left
         center_pos_x - half_side_length, center_pos_y + half_side_length, center_pos_z - half_side_length, // top right
         center_pos_x - half_side_length, center_pos_y - half_side_length, center_pos_z - half_side_length, // bottom right
         center_pos_x - half_side_length, center_pos_y - half_side_length, center_pos_z + half_side_length, // bottom left
-        
         // right face
         center_pos_x + half_side_length, center_pos_y + half_side_length, center_pos_z + half_side_length, // top left
         center_pos_x + half_side_length, center_pos_y + half_side_length, center_pos_z - half_side_length, // top right
         center_pos_x + half_side_length, center_pos_y - half_side_length, center_pos_z - half_side_length, // bottom right
         center_pos_x + half_side_length, center_pos_y - half_side_length, center_pos_z + half_side_length, // bottom left
-        
         // top face
         center_pos_x - half_side_length, center_pos_y + half_side_length, center_pos_z + half_side_length, // top left
         center_pos_x - half_side_length, center_pos_y + half_side_length, center_pos_z - half_side_length, // top right
         center_pos_x + half_side_length, center_pos_y + half_side_length, center_pos_z - half_side_length, // bottom right
-        center_pos_x + half_side_length, center_pos_y + half_side_length, center_pos_z + half_side_length, // bottom left
-        
+    	center_pos_x + half_side_length, center_pos_y + half_side_length, center_pos_z + half_side_length, // bottom left
         // top face
         center_pos_x - half_side_length, center_pos_y - half_side_length, center_pos_z + half_side_length, // top left
         center_pos_x - half_side_length, center_pos_y - half_side_length, center_pos_z - half_side_length, // top right
@@ -132,34 +124,39 @@ void draw_cube( GLfloat center_pos_x, GLfloat center_pos_y, GLfloat center_pos_z
         center_pos_x + half_side_length, center_pos_y - half_side_length, center_pos_z + half_side_length  // bottom left
     };
     
-    glPolygonMode( GL_FRONT_AND_BACK, GL_POLYGON );
-    //glColor3f( colour[0], colour[1], colour[2] );
-    glEnableClientState( GL_VERTEX_ARRAY );
-    glVertexPointer( 3, GL_FLOAT, 0, vertices );
+    glPolygonMode(GL_FRONT_AND_BACK, GL_POLYGON);
+    glEnableClientState(GL_VERTEX_ARRAY);
+    glVertexPointer(3, GL_FLOAT, 0, vertices);
 	glShadeModel(GL_SMOOTH);
-
-    glDrawArrays(GL_QUADS, 0, 24 );
+	
+	glDrawArrays(GL_QUADS, 0, 24 );
     
-    glDisableClientState( GL_VERTEX_ARRAY );
+    glDisableClientState(GL_VERTEX_ARRAY);
 }
-
 
 void draw_pane()
 {
+	glDisable(GL_LIGHTING);
 	glPushMatrix();
-		glScalef(10, 1, 1);
-		glColor3f(0,0.75,0);
+		glColor3f(0,1,0);
 		glBegin(GL_POLYGON);
-			glVertex3f(1,0,-1);
-			glVertex3f(0,1,-1);
-			glVertex3f(-1,0,-1);
-			glVertex3f(0,-1,-1);
+			glVertex3f(100,0, 0);
+			glVertex3f(0,100, 0);
+			glVertex3f(-100,0,0);
+			glVertex3f(0,-100,0);
 		glEnd();
 	glPopMatrix();
+	glEnable(GL_LIGHTING);
+
 
 }
 
 void toggle_helper()
 {
 	animation_helper = !animation_helper ? 1:0; 
+}
+
+void print_keys()
+{
+	fprintf(stdout, "Keys active/inactive: W: %d A: %d S: %d D: %d R: %d Q: %d\n", keys['w'], keys['a'], keys['s'], keys['d'], keys['r'], keys['q']);
 }

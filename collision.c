@@ -1,6 +1,9 @@
 #include "collision.h"
 #include <stdio.h>
 
+
+int collision_tile_flag = 0;
+
 int player_floor_collision(player *p)
 {
     return p->y_curr - p->r <= COLLISION_FLOOR;
@@ -9,7 +12,6 @@ int player_floor_collision(player *p)
 void player_floor_collision_event(player *p)
 {
     /* add some better info output */
-    printf("Desila se kolizija sa podom.\n");
     if(player_floor_collision(p)){
         /* stop the ball*/
         p->v_x = 0;
@@ -18,50 +20,28 @@ void player_floor_collision_event(player *p)
     }
 }
 
-int brick_collision_half_edge1(player *p, tile *t)
+int collision_tile(player *p, tile *t)
 {
-    return (p->y_curr - p->r < t->y + (t->edge_length / 2.0f));
-}
-int brick_collision_half_edge2(player *p, tile *t)
-{
-    return (p->x_curr - p->r < (t->edge_length * t->scaling_factor) / 2.0f && p->y_curr - p->r < (t->edge_length * t->scaling_factor) / 2.0f); 
+    return p->x_curr < t->x + t->edge_length &&
+           p->x_curr + p->r > t->x &&
+           p->y_curr < t->y + t->edge_length &&
+           p->y_curr + p->r > t->y;
 }
 
 
-/* rastojanje samo izmedju polovine dijagonale i polovine sranice */
-int player_tile_collision(player *p, tile *t)
-{
-    return brick_collision_half_edge1(p, t) || brick_collision_half_edge2(p, t);
-}
 void player_brick_collision_event(player *p, map *m)
 {
     for(int i = 0; i < m->current_size; i++){
-        if(brick_collision_half_edge1(p, &m->t[i])){
-            p->x_curr = m->t[i].x + (m->t[i].edge_length) / 2.0f;
-            p->y_curr = m->t[i].y + (m->t[i].edge_length) / 2.0f;
-            p->v_y += 0;
+        tile tmp = m->t[i];
+        if(collision_tile(p, &tmp)){
+            p->x_curr = tmp.x;
+            p->y_curr = tmp.y + tmp.edge_length / 2.0f  + p->r + 5.0f;
+            p->jump_height = p->y_curr + 100.0f;
+            collision_tile_flag = 1;
         }
-        else if(brick_collision_half_edge2(p, &m->t[i])){
-            p->x_curr = m->t[i].x - (m->t[i].edge_length * m->t[i].scaling_factor) / 2.0f;
-            p->y_curr = m->t[i].y - (m->t[i].edge_length * m->t[i].scaling_factor) / 2.0f;
-            p->v_y += 0;
-
+        else{
+            collision_tile_flag = 0;
         }
     }
 }
 
-void collision_checks(player *p, map *m)
-{
-    player_brick_collision_event(p,m);
-    player_floor_collision_event(p);
-}
-
-
-void print_collision_info(player *p, map *m)
-{
-    fprintf(stdout, "*************************************************\n");
-    fprintf(stdout, "Collision infomration:\n");
-    fprintf(stdout, "Player (%f, %f)\n", p->x_curr, p->y_curr);
-    fprintf(stdout, "Collision with floor: %d\n", player_floor_collision(p));
-    fprintf(stdout, "*************************************************\n");
-}

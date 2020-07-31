@@ -5,7 +5,9 @@
 #include "player.h"
 #include "map.h"
 
-#define COLLISION_FLOOR (-1000.0f)
+#define COLLISION_FLOOR (-550.0f)
+
+extern int collision_tile_flag;
 
 int player_floor_collision(player *p);
 void player_floor_collision_event(player *p);
@@ -15,6 +17,6 @@ int brick_collision_half_edge2(player *p, tile *t);
 void player_brick_collision_event(player *p, map *m);
 void collision_checks(player *p, map *m);
 void print_collision_info(player *p, map *m);
-
+int collision_tile(player *p, tile *t);
 
 #endif

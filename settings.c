@@ -24,10 +24,8 @@ void restart_game(player *p, animation_settings *as)
     p->y_curr = 300;
     p->v_x = 10;
     p->v_y = 5;
-    p->player_state = FALLING;
-    p->jump_counter = 2;
-    
-    as->animation_active=1;
+    p->player_state = STILL;    
+    as->animation_active=0;
     as->gm=INIT;
 }
 
@@ -44,7 +42,6 @@ void stop_game(player *p, animation_settings *as)
     p->v_y = 0;
     as->gm = STOP;
     as->animation_active = 0;
-    as->gm = STOP;
 }
 
 void quit_game()
@@ -59,7 +56,7 @@ void print_game_status_info(player *p, animation_settings *as)
 	fprintf(stdout, "*******************************************\n");
 	fprintf(stdout, "Status: \n");
 	fprintf(stdout, "Player position: (%f, %f,0)\nPlayer velocity: (%f, %f,0)\n", p->x_curr, p->y_curr, p->v_x, p->v_y);
-	fprintf(stdout, "Player state: %s\nPlayer: jump_counter: %d \nPlayer animation_parameter: %f\n", get_player_state(p), p->jump_counter, p->animation_parameter);
+	fprintf(stdout, "Player state: %s\nPlayer animation_parameter: %f\n", get_player_state(p), p->animation_parameter);
 	fprintf(stdout, "Animation active: %s - Animation game mode: %s\n", ((as->animation_active) ? "yes" : "no"), get_game_mode(as));
 	fprintf(stdout, "*******************************************\n");
 }
