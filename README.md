@@ -2,7 +2,7 @@
 
 ## Bally-o
 
-**Bally-o** is a simple platformer game, written in C, using OpenGL/freeGLUT API. <br />
+**Bally-o** is a simple platformer game, written in C with OpenGL/freeGLUT API. <br />
 You play as a ball and your task is to get to the final block.<br />
 
 ## Links to additional libraries
